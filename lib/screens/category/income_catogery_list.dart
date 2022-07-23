@@ -1,19 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:money_management_app/db/category/category_db.dart';
+import 'package:money_management_app/models/category/category_model.dart';
 
 class IncomeCategoryList extends StatelessWidget {
   const IncomeCategoryList({Key? key}) : super(key: key);
 
-  @override
+ @override
   Widget build(BuildContext context) {
-    return ListView.separated(
+    return ValueListenableBuilder(
+      valueListenable: CategoryDB().incomeCategoryListListener,
+      builder: (BuildContext ctx, List<CategoryModel> newlist, Widget? _){
+       return ListView.separated(
       itemBuilder: ((ctx, index) {
+        final category =newlist[index];
         return Card(
           child: ListTile(
             title: Text(
-              'Income Catogery $index',
+              category.name,
             ),
             trailing: IconButton(
-              onPressed: () {},
+              onPressed: () {
+                CategoryDB.instance.deleteCategory(category.id);
+              },
               icon: Icon(Icons.delete),
             ),
           ),
@@ -24,7 +32,9 @@ class IncomeCategoryList extends StatelessWidget {
           height: 7,
         );
       },
-      itemCount: 100,
+      itemCount: newlist.length,
+    );
+      },
     );
   }
 }
